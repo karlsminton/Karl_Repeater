@@ -1,0 +1,16 @@
+{
+  "name": "karl/repeater",
+  "description": "Repeating cms blocks which can be used to create custom layouts.",
+  "type": "magento2-module",
+  "require": {
+    "php": "~7.0.0|~7.1.0|~7.2.0"
+  },
+  "autoload": {
+    "files": [
+        "registration.php"
+    ],
+    "psr-4": {
+        "Karl\\Repeater\\": ""
+    }
+  }
+}
