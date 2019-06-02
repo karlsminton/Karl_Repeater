@@ -40,14 +40,14 @@ class Save extends Action
 
     public function execute()
     {
-        /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultRedirectFactory->create();
         $data = $this->getRequest()->getPostValue();
         if ($data) {
 
-            $model = $this->blockFactory->create();
+            //$model = $this->blockFactory->create();
 
             $id = $this->getRequest()->getParam('id');
+            //var_dump($data);die;
             if ($id) {
                 try {
                     $model = $this->blockRepository->getById($id);
@@ -55,9 +55,15 @@ class Save extends Action
                     $this->messageManager->addErrorMessage(__('This block no longer exists.'));
                     return $resultRedirect->setPath('*/*/');
                 }
+            } 
+            else {
+                $model = $this->blockFactory->create();
             }
 
-            $model->setData($data);
+            //$model->setData($data);
+            $model->setName($data['name']);
+            $model->setIdentifier($data['identifier']);
+            $model->setItems($data['items']);
 
             try {
                 $this->blockRepository->save($model);

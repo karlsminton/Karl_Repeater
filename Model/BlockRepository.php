@@ -3,7 +3,9 @@
 namespace Karl\Repeater\Model;
 
 use Karl\Repeater\Api\BlockRepositoryInterface;
+use Karl\Repeater\Api\Data\BlockRepositoryInterfaceFactory;
 use Karl\Repeater\Api\Data\BlockInterface;
+use Karl\Repeater\Api\Data\BlockSearchResultsInterfaceFactory;
 use Karl\Repeater\Model\ResourceModel\Block;
 use Karl\Repeater\Model\BlockFactory;
 use Karl\Repeater\Model\ResourceModel\Block\CollectionFactory;
@@ -13,6 +15,8 @@ use Magento\Framework\Exception\CouldNotDeleteException;
 class BlockRepository implements BlockRepositoryInterface
 {
 
+    protected $searchResultsFactory;
+
     protected $resource;
 
     protected $blockFactory;
@@ -20,13 +24,32 @@ class BlockRepository implements BlockRepositoryInterface
     protected $blockCollectionFactory;
 
     public function __construct(
+        BlockSearchResultsInterfaceFactory $searchResultsFactory,
         CollectionFactory $blockCollectionFactory,
         Block $block,
-        BlockFactory $blockFactory
+        BlockFactory $blockFactory,
+        \Karl\Repeater\Model\ResourceModel\Block $res
     ) {
+        $this->searchResultsFactory = $searchResultsFactory;
         $this->blockCollectionFactory = $blockCollectionFactory;
-        $this->resource = $block;
+        //$this->resource = $block;
+        $this->resource = $res;
         $this->blockFactory = $blockFactory;
+        $this->searchResultsFactory = $searchResultsFactory;
+    }
+    
+    public function getById($id)
+    {
+        $block = $this->blockFactory->create();
+        if ($id != null && $id != '') {
+            try {
+                $this->resource->load($block, $id, 'id');
+            }
+            catch (\Exception $e) {
+                die($e->getMessage);
+            }
+        }
+        return $block;
     }
 
     public function getByIdentifier($identifier)
@@ -43,25 +66,19 @@ class BlockRepository implements BlockRepositoryInterface
         return $block;
     }
 
-    public function save(BlockInterface $block)
+    public function save(\Karl\Repeater\Model\Block $block)
     {
-        if ($block->getId() !== null) {
-            try {
-                $instance = $this->blockFactory->create();
-                $this->resource->load($instance, $block->getId());
-                $this->resource->save($instance->setData($block));
-            } catch (\Exception $exception) {
-                throw new CouldNotSaveException(__($exception->getMessage()));
-            }
-            return true;
+        try {
+            $this->resource->save($block);
+        } catch (\Exception $exception) {
+            throw new CouldNotSaveException(__($exception->getMessage()));
         }
+        return $block;
     }
 
     public function getList(\Magento\Framework\Api\SearchCriteriaInterface $criteria)
     {
         $collection = $this->blockCollectionFactory->create();
-
-        //$this->collectionProcessor->process($criteria, $collection);
 
         $searchResults = $this->searchResultsFactory->create();
         $searchResults->setSearchCriteria($criteria);
@@ -80,7 +97,7 @@ class BlockRepository implements BlockRepositoryInterface
         return true;
     }
 
-    private function getCollectionProcessor()
+    public function getCollectionProcessor()
     {
         if (!$this->collectionProcessor) {
             $this->collectionProcessor = \Magento\Framework\App\ObjectManager::getInstance()->get(

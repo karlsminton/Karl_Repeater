@@ -34,7 +34,6 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
             return $this->loadedData;
         }
         $items = $this->collection->getItems();
-        /** @var \Magento\Cms\Model\Block $block */
         foreach ($items as $block) {
             $this->loadedData[$block->getId()] = $block->getData();
         }

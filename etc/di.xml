@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
+    <!-- New -->
     <preference for="Karl\Repeater\Api\Data\BlockSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
     <preference for="Karl\Repeater\Api\Data\BlockInterface" type="Karl\Repeater\Model\Block" />
     <preference for="Karl\Repeater\Api\BlockRepositoryInterface" type="Karl\Repeater\Model\BlockRepository" />
-    <!--<preference for="Magento\Cms\Api\GetUtilityPageIdentifiersInterface" type="Magento\Cms\Model\GetUtilityPageIdentifiers" />-->
 
     <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
         <arguments>
